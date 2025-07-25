@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mini Pac-Man</title>
+  <style>
+    body {
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+      font-family: sans-serif;
+    }
+    canvas {
+      border: 2px solid yellow;
+      background-color: #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="300" height="300"></canvas>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const tileSize = 30;
+    const map = [
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,0,0,0,1,0,0,0,0,1],
+      [1,0,1,0,1,0,1,1,0,1],
+      [1,0,1,0,0,0,0,1,0,1],
+      [1,0,1,1,1,1,0,1,0,1],
+      [1,0,0,0,0,1,0,0,0,1],
+      [1,1,1,1,1,1,1,1,1,1],
+    ];
+
+    const player = {
+      x: 1,
+      y: 1,
+      color: "yellow"
+    };
+
+    function drawMap() {
+      for (let y = 0; y < map.length; y++) {
+        for (let x = 0; x < map[y].length; x++) {
+          if (map[y][x] === 1) {
+            ctx.fillStyle = "blue";
+            ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+          } else {
+            ctx.fillStyle = "black";
+            ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+
+            // ponto
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.arc(x * tileSize + tileSize/2, y * tileSize + tileSize/2, 3, 0, 2 * Math.PI);
+            ctx.fill();
+          }
+        }
+      }
+    }
+
+    function drawPlayer() {
+      ctx.fillStyle = player.color;
+      ctx.beginPath();
+      ctx.arc(player.x * tileSize + tileSize/2, player.y * tileSize + tileSize/2, tileSize/2 - 2, 0.25 * Math.PI, 1.75 * Math.PI);
+      ctx.lineTo(player.x * tileSize + tileSize/2, player.y * tileSize + tileSize/2);
+      ctx.fill();
+    }
+
+    function gameLoop() {
+      drawMap();
+      drawPlayer();
+    }
+
+    function movePlayer(dx, dy) {
+      const newX = player.x + dx;
+      const newY = player.y + dy;
+
+      if (map[newY][newX] !== 1) {
+        player.x = newX;
+        player.y = newY;
+      }
+
+      gameLoop();
+    }
+
+    window.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowUp": movePlayer(0, -1); break;
+        case "ArrowDown": movePlayer(0, 1); break;
+        case "ArrowLeft": movePlayer(-1, 0); break;
+        case "ArrowRight": movePlayer(1, 0); break;
+      }
+    });
+
+    gameLoop();
+  </script>
+</body>
+</html>
